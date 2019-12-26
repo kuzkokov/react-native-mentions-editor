@@ -26,7 +26,8 @@ export class Editor extends React.Component {
     onHideMentions: PropTypes.func,
     editorStyles: PropTypes.object,
     placeholder: PropTypes.string,
-    renderMentionList: PropTypes.func
+    renderMentionList: PropTypes.func,
+    autoFocus: PropTypes.bool
   };
 
   constructor(props) {
@@ -39,7 +40,7 @@ export class Editor extends React.Component {
       this.mentionsMap = map;
       msg = newValue;
       formattedMsg = this.formatText(newValue);
-      setTimeout(()=>{
+      setTimeout(() => {
         this.sendMessageToFooter(newValue);
       });
     }
@@ -305,11 +306,14 @@ export class Editor extends React.Component {
     this.setState({ selection: newSelc });
   };
 
-  formatMentionNode = (txt, key) => (
-    <Text key={key} style={styles.mention}>
-      {txt}
-    </Text>
-  );
+  formatMentionNode = (txt, key) => {
+    const { editorStyles = {} } = this.props;
+    return (
+      <Text key={key} style={[styles.mention, editorStyles.mention]}>
+        {txt}
+      </Text>
+    );
+  };
 
   formatText(inputText) {
     /**
@@ -486,12 +490,10 @@ export class Editor extends React.Component {
       const androidTextHeight = 20.5;
       // const textHeight = Platform.OS === 'ios' ? iosTextHeight : androidTextHeight
 
-      const height =
+      const editorHeight =
         Platform.OS === "ios"
           ? evt.nativeEvent.contentSize.height
           : evt.nativeEvent.contentSize.height - androidTextHeight;
-      let editorHeight = 40;
-      editorHeight = editorHeight + height;
       this.setState({
         editorHeight
       });
@@ -563,7 +565,7 @@ export class Editor extends React.Component {
                 ref={input => props.onRef && props.onRef(input)}
                 style={[styles.input, editorStyles.input]}
                 multiline
-                autoFocus
+                autoFocus={props.autoFocus}
                 numberOfLines={100}
                 name={"message"}
                 value={state.inputText}
