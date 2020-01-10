@@ -27,7 +27,11 @@ export class Editor extends React.Component {
     editorStyles: PropTypes.object,
     placeholder: PropTypes.string,
     renderMentionList: PropTypes.func,
-    autoFocus: PropTypes.bool
+    inputProps: PropTypes.object
+  };
+
+  static defaultProps = {
+    inputProps: {}
   };
 
   constructor(props) {
@@ -60,7 +64,7 @@ export class Editor extends React.Component {
       },
       menIndex: 0,
       showMentions: false,
-      editorHeight: 72,
+      editorHeight: "100%",
       scrollContentInset: { top: 0, bottom: 0, left: 0, right: 0 },
       placeholder: props.placeholder || "Type something..."
     };
@@ -129,7 +133,7 @@ export class Editor extends React.Component {
     this.setState({
       isTrackingStarted: false
     });
-    this.props.onHideMentions();
+    this.props.onHideMentions && this.props.onHideMentions();
   }
 
   updateSuggestions(lastKeyword) {
@@ -565,7 +569,6 @@ export class Editor extends React.Component {
                 ref={input => props.onRef && props.onRef(input)}
                 style={[styles.input, editorStyles.input]}
                 multiline
-                autoFocus={props.autoFocus}
                 numberOfLines={100}
                 name={"message"}
                 value={state.inputText}
@@ -577,6 +580,7 @@ export class Editor extends React.Component {
                 placeholder={state.placeholder}
                 onContentSizeChange={this.onContentSizeChange}
                 scrollEnabled={false}
+                {...props.inputProps}
               />
             </View>
           </ScrollView>
